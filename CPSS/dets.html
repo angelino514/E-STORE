@@ -20,24 +20,25 @@
 
          <div class="navbar-dts">
 
-            <button class="ver_fovorito link_carrinho">
+            <button class="verItens link_carrinho" value="favoritos">
                <span class="material-symbols-outlined">
                   favorite
                </span>
 
-               <span class="numero_favorito">0</span>
+               <span class="numero_favorito numero_itens" data-nome="favorito">0</span>
             </button>
 
-            <button class="verItensCarrinho link_carrinho">
+            <button class="verItens link_carrinho" value="carrinho">
                <span class="material-symbols-outlined"> shopping_bag </span>
-               <span class="numeros_Itens numeros_carrinho"> </span>
+               <span class="verItens numeros_carrinho numero_itens" data-nome="carrinho"> </span>
             </button>
          </div>
       </div>
    </header>
 
 
-   <main class="main-dts">
+
+   <main class=" main-dts main_gerl_container">
       <section class="face" id="id_detalhes_face"></section>
 
       <!-- section para carrinho de compra  -->
@@ -79,17 +80,25 @@
       </section>
    </main>
 
-   <section class="ver_itens_carrinho">
-      <div class="face ver_container">
-         <article class="art_ver_remove">
-            <button class="material-symbols-outlined b_ver_remover"> close </button>
-         </article>
 
-         <article class="art_container_ver">
+   <section class="section_list_geral">
 
-         </article>
+      <div class="container_face_list face">
+
+         <div class="container_remove_list">
+            <button class="verItens" value="remover">
+               <span class="material-symbols-outlined b_ver_remover"> close </span>
+            </button>
+         </div>
+
+         <div class="container_auto_list">
+
+         </div>
+
       </div>
+
    </section>
+
 
    <section class="sect_favorito">
 

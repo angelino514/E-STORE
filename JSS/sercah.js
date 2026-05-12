@@ -3,71 +3,85 @@ import { itensVendas } from "../bancoDados.js"
 import { carrinho } from "./dets.js"
 
 
-//==================
-// VARIAVEIS GLOBAIS
-//==================
-let coresSelecinada = ""
-let tamanhoSelionado = ""
-
-// elemento que mostra número de itens no carrinho
-let numeros_Itens = document.querySelector('.numeros_Itens')
-
 // PEGAR OS DADOS DE PESQUISA APARTIR DA URL
 const params = new URLSearchParams(window.location.search)
 let dadosPesquisa = params.get('dadosPesquisa')
 
-// FILTRAR OS ITENS COM BASE NA PESQUISA
-let itensFillter = itensVendas.filter(itvs =>
-   itvs.iten.includes(dadosPesquisa) || itvs.itenDesc.includes(dadosPesquisa)
-)
 
-// CRIAR RESULTADOS DINAMICAMENTE NA TELA
-itensFillter.forEach(itens => {
+function resultadoTela(valor) {
+   document.querySelector('.dw-resultado').innerHTML = ''
 
-   // criar elementos HTML
-   let buttonResultado = document.createElement('button')
-   let imgResultado = document.createElement('img')
-   let detalhesResultado = document.createElement('div')
-   let p_detalheResultado = document.createElement('p')
-   let nameIten = document.createElement('span')
-   let precoIten = document.createElement('span')
-   let iconeResultado = document.createElement('div')
-   let icone = document.createElement('span')
+   if (valor.trim() != '') {
+      let itensFillter = itensVendas.filter(itvs =>
+         itvs.iten.includes(valor) || itvs.itenDesc.includes(valor)
+      )
 
-   // guardar id no dataset do botão
-   buttonResultado.dataset.id = itens.id
-   imgResultado.dataset.id = itens.id
+      // CRIAR RESULTADOS DINAMICAMENTE NA TELA
+      itensFillter.forEach(itens => {
 
-   iconeResultado.addEventListener('click', () => {
-      let id = iconeResultado.closest('.itens-resultado').dataset.id
-      adicionarCarrinho(id)
-   })
+         // criar elementos HTML
+         let buttonResultado = document.createElement('button')
+         buttonResultado.classList.add('itens-resultado')
+         buttonResultado.dataset.id = itens.id
 
-   // adicionar classes CSS
-   buttonResultado.classList.add('itens-resultado')
-   imgResultado.classList.add('img-resultado')
-   detalhesResultado.classList.add('detalhes-resultado')
-   p_detalheResultado.classList.add('p-detalhe-resultado')
-   nameIten.classList.add('name-iten')
-   precoIten.classList.add('preco-iten')
-   icone.classList.add('material-symbols-outlined')
+         let imgResultado = document.createElement('img')
+         imgResultado.classList.add('img-resultado')
+         imgResultado.dataset.id = itens.id
+         imgResultado.src = "../IMGS/../" + itens.img
 
-   // inserir na página
-   document.querySelector('.dw-resultado').appendChild(buttonResultado)
-   buttonResultado.appendChild(imgResultado).src = "../IMGS/../" + itens.img
-   buttonResultado.appendChild(detalhesResultado)
-   detalhesResultado.appendChild(p_detalheResultado)
-   p_detalheResultado.appendChild(nameIten).textContent = itens.iten
-   p_detalheResultado.appendChild(precoIten).textContent = itens.preco + "Kz"
-   detalhesResultado.appendChild(iconeResultado)
-   iconeResultado.appendChild(icone).textContent = "add_shopping_cart"
 
-   imgResultado.addEventListener('click', () => {
-      let xb = Number(buttonResultado.dataset.id)
-      enviar(xb)
-   })
-})
+         let detalhesResultado = document.createElement('div')
+         detalhesResultado.classList.add('detalhes-resultado')
 
+
+         let p_detalheResultado = document.createElement('p')
+         p_detalheResultado.classList.add('p-detalhe-resultado')
+
+
+         let nameIten = document.createElement('span')
+         nameIten.classList.add('name-iten')
+         nameIten.textContent = itens.iten
+
+         let precoIten = document.createElement('span')
+         precoIten.classList.add('preco-iten')
+         precoIten.textContent = itens.preco + "Kz"
+
+         let iconeResultado = document.createElement('div')
+
+         let icone = document.createElement('span')
+         icone.classList.add('material-symbols-outlined')
+
+         iconeResultado.addEventListener('click', () => {
+            iconeResultado.addEventListener('click', () => {
+               adicionarItens({ id: Number(iconeResultado.closest('.itens-resultado').dataset.id), dados: 'carrinho' })
+            })
+         })
+
+         // INSERIR NA PAGINA
+         document.querySelector('.dw-resultado').appendChild(buttonResultado)
+         buttonResultado.appendChild(imgResultado)
+         buttonResultado.appendChild(detalhesResultado)
+         detalhesResultado.appendChild(p_detalheResultado)
+         p_detalheResultado.appendChild(nameIten)
+         p_detalheResultado.appendChild(precoIten)
+         detalhesResultado.appendChild(iconeResultado)
+         iconeResultado.appendChild(icone).textContent = "add_shopping_cart"
+
+         imgResultado.addEventListener('click', () => {
+            enviar(Number(buttonResultado.dataset.id))
+         })
+      })
+
+      if (itensFillter.length === 0) {
+         resultadoNone('nofund')
+      }
+      else {
+         resultadoNone('fund')
+      }
+   }
+   // CASO NÃO ENCONTRE RESULTADOS
+}
+resultadoTela(dadosPesquisa)
 
 // FUNÇÃO PARA ENVIAR O ID PARA OUTRA PÁGINA
 function enviar(id) {
@@ -75,8 +89,303 @@ function enviar(id) {
    window.location.href = "CPSS/../dets.html?id=" + id
 }
 
-if (itensFillter.length === 0) {
-   // CASO NÃO ENCONTRE RESULTADOS
+//===========================================
+//FUNÇÃO EXIBIR MENSAGEM PESQUISA NAO ENCOTRADA
+//============================================
+function resultadoNone(valor) {
+   let dw_sugestoes = document.querySelector('.dw-resultado')
+
+   if (valor === 'nofund') {
+
+      dw_sugestoes.innerHTML = ''
+      dw_sugestoes.classList.add('grid_none')
+      let resultado_none = document.createElement('div')
+      resultado_none.classList.add('resultado_none')
+
+      let text_none = document.createElement('p')
+      text_none.textContent = 'Não foi possível encotrar o item!'
+
+      dw_sugestoes.appendChild(resultado_none)
+      resultado_none.appendChild(text_none)
+   }
+
+   else if (valor === 'fund') {
+      dw_sugestoes.classList.remove('grid_none')
+   }
+}
+
+//==================
+// VARIAVEIS GLOBAIS
+//==================
+let coresSelecinada = ""
+let tamanhoSelionado = ""
+
+//=======================================
+// ADICIONAR ITENS A LISTA 
+//======================================
+function adicionarItens({ id, dados }) {
+
+   for (let i = 0; i < itensVendas.length; i++) {
+      if (id === itensVendas[i].id) {
+
+         coresSelecinada = itensVendas[i].cores[0]
+         tamanhoSelionado = itensVendas[i].tamanho[0]
+
+
+         if (coresSelecinada != '' && tamanhoSelionado != '') {
+            // =======================================
+            // DECISAO ONDE DEVE SER ADICIONADO O ITEM 
+            //=========================================
+            if (dados == 'carrinho') {
+
+               //VERIFICAR SE EXISTE NO CARRINHO
+               let existeItem = carrinho.find(p =>
+                  p.id == id && p.cor == coresSelecinada && p.tamanho == tamanhoSelionado
+               )
+
+               //SE EXISTE NO CARRINHO ENCREMENTA A QUANTIDADE 
+               if (existeItem && dados == 'carrinho') { existeItem.quantidade++ }
+
+               // SE NAO EXISTE ADICIONA UM ITEM AO CARRINHO
+               else {
+                  carrinho.push({ id: itensVendas[i].id, iten: itensVendas[i].iten, img: itensVendas[i].img, preco: itensVendas[i].preco, cor: coresSelecinada, descricao: itensVendas[i].itenDesc, tamanho: tamanhoSelionado, quantidade: 1, dados: dados })
+               }
+            }
+
+            //MESSAGEM
+            avisoGeral('add')
+         }
+      }
+   }
+
+
+   // ACTULIZAR ITENS
+   actualizar()
+}
+
+// ============================
+// FUNCAO DE AVISO GERAL ( EXIBIR MENSAGEM DE AVSISO )
+//=============================
+function avisoGeral(valor) {
+   let sect_avisoAdicionar = document.querySelector('.sect_avisoAdicionar')
+   sect_avisoAdicionar.classList.add('activo_avisoAdicionar')
+
+   let processo = document.querySelector('.processo')
+   let avisoAdicionar = document.querySelector('.avisoAdicionar')
+
+   if (valor == 'favorito') {
+      avisoAdicionar.textContent = 'lista vazia'
+      processo.classList.add('processo_none')
+   }
+
+   else if (valor == 'carrinho') {
+      avisoAdicionar.textContent = 'carrinho vazio'
+      processo.classList.add('processo_none')
+   }
+
+   else if (valor == 'add') {
+      avisoAdicionar.textContent = 'item adicionado ao carrinho'
+   }
+   removerMensgem()
+
+   // ACTULIZAR ITENS
+   actualizar()
+}
+
+// ================================
+// LIMPAR MENSAGENS
+// ================================
+function removerMensgem() {
+   let activo_avisoAdicionar = document.querySelector('.activo_avisoAdicionar')
+   if (activo_avisoAdicionar) {
+      setTimeout(() => {
+         activo_avisoAdicionar.classList.remove('activo_avisoAdicionar')
+      }, 1000)
+   }
+}
+
+
+//======================
+//ELEMENTOS DINAMICOS DAS LISTAS
+//===================
+function mostrarGeral(itensGerais) {
+
+   // PREPARAR A LISTA PARA RECEBER NOVOS ITENS
+   let container_auto_list = document.querySelector('.container_auto_list')
+   container_auto_list.innerHTML = ''
+
+   itensGerais.forEach(itengeral => {
+
+      let div_container_list = document.createElement('div')
+      div_container_list.classList.add('div_container_list')
+      div_container_list.dataset.tipo = itengeral.dados
+      div_container_list.dataset.nome = itengeral.iten
+      div_container_list.dataset.id = itengeral.id
+      div_container_list.dataset.cor = itengeral.cor
+      div_container_list.dataset.tamanho = itengeral.tamanho
+
+      let itens_container_list = document.createElement('div')
+      itens_container_list.classList.add('itens_container_list')
+      itens_container_list.classList.add('fadeUP_list')
+
+      let itens_img_list = document.createElement('img')
+      itens_img_list.classList.add('itens_img_list')
+      itens_img_list.src = itengeral.img
+
+      let itens_texto_list = document.createElement('p')
+      itens_texto_list.classList.add('itens_texto_list')
+      itens_texto_list.textContent = itengeral.iten
+
+      let container_qt_list = document.createElement('div')
+      container_qt_list.classList.add('container_qt_list')
+      container_qt_list.textContent = itengeral.quantidade
+      container_qt_list.classList.add('fadeUP_list')
+
+
+      let container_more_list = document.createElement('button')
+      container_more_list.classList.add('container_more_list')
+      container_more_list.textContent = ':'
+      container_more_list.classList.add('fadeUP_list')
+
+      let remover_itens_list = document.createElement('button')
+      remover_itens_list.classList.add('remover_itens_list')
+      remover_itens_list.classList.add('material-symbols-outlined')
+      remover_itens_list.textContent = 'delete'
+      remover_itens_list.classList.add('fadeUP_list')
+
+      //=====================================
+      // ENVIAR OS DADOS COM BASE DO TIPO DE LISTA
+      //======================================
+      if (itengeral.dados == 'favoritos') {
+         remover_itens_list.addEventListener('click', () => {
+            // ENVIAR OS DADOS DO ELEMENTO PAI 
+            removerItensList(remover_itens_list.closest('.div_container_list'))
+
+            // ACTULIZAR ITENS
+            actualizar()
+         })
+      }
+
+      if (itengeral.dados == 'carrinho') {
+         remover_itens_list.addEventListener('click', () => {
+            // ENVIAR OS DADOS DO ELEMENTO PAI 
+            removerItensList(remover_itens_list.closest('.div_container_list'))
+
+            // ACTULIZAR ITENS
+            actualizar()
+         })
+      }
+
+
+      let container_auto_list = document.querySelector('.container_auto_list')
+
+      container_auto_list.appendChild(div_container_list)
+      div_container_list.appendChild(itens_container_list)
+      itens_container_list.appendChild(itens_img_list)
+      itens_container_list.appendChild(itens_texto_list)
+
+      div_container_list.appendChild(container_qt_list)
+      div_container_list.appendChild(container_more_list)
+      div_container_list.appendChild(remover_itens_list)
+   })
+}
+
+//=============================
+//REMOVER ITENS DA LISTA FAVORITO E CARRINHO
+//=============================
+function removerItensList(valor) {
+   let valorQuantidade = valor.querySelector('.container_qt_list')
+
+   // DADOS DO ITEN QUE FOI CLICADO
+   let id = valor.dataset.id
+   let iten = valor.dataset.nome
+   let cor = valor.dataset.cor
+   let tamanho = valor.dataset.tamanho
+   let tipo = valor.dataset.tipo
+
+   // VERIFICAR SE EXISTE E PERTENCE A QUE LISTA 
+   if (valor.dataset.tipo == 'carrinho') {
+      let existeItem = carrinho.find(p =>
+         p.id == id && p.cor == cor
+         && p.tamanho == tamanho &&
+         p.iten == iten && p.dados == tipo
+      )
+
+      // DECREMENTAR SE EXISTE O ITEN NA LISTA DO CARRINHO
+      decrementar(existeItem)
+   }
+
+   // VERIFICAR SE EXISTE E PERTENCE A QUE LISTA DOS FAVORITOS
+   if (valor.dataset.tipo == 'favoritos') {
+      let existeItem = favoritos.find(p =>
+         p.id == id && p.cor == cor
+         && p.tamanho == tamanho &&
+         p.iten == iten && p.dados == tipo
+      )
+
+      // DECREMENTAR SE EXISTE O ITEN NA LISTA
+      decrementar(existeItem)
+   }
+
+   function decrementar(existeItem) {
+      // DECREMENTAR A QUANTIDADE DE ITENS
+      if (existeItem) {
+         if (existeItem.quantidade >= 1) {
+            existeItem.quantidade -= 1
+         }
+
+         // EXIBIR NO HTML
+         valorQuantidade.textContent = existeItem.quantidade
+
+         if (existeItem.quantidade === 0) {
+
+            // SE A QUANTIDADE FOR IGUAL A ZERO ATIVA A FUNACAO REMOCAO ORIGINAL
+            remocaoOriginal(id, iten, cor, tamanho, tipo, valor)
+         }
+      }
+   }
+}
+
+//=======================================================
+// FUNCAO : POSICAO DO ITEN NA LISTA E REMOCAO PERMANENTE
+//========================================================
+function remocaoOriginal(id, iten, cor, tamanho, tipo, valor) {
+
+   if (tipo == 'carrinho') {
+      // PROCURAR A POSICAO DO ITEN NO CARRINHO
+      let indice = carrinho.findIndex(p =>
+         p.id == id &&
+         p.cor == cor &&
+         p.tamanho == tamanho &&
+         p.dados == tipo
+      )
+      if (indice !== -1) {
+         carrinho.splice(indice, 1)
+         remocaoFinal(valor)
+      }
+   }
+
+   if (tipo == 'favoritos') {
+      // PROCURAR A POSICAO DO ITEN NOS FAVORITOS
+      let indice = favoritos.findIndex(p =>
+         p.id == id &&
+         p.cor == cor &&
+         p.tamanho == tamanho &&
+         p.dados == tipo
+      )
+      if (indice !== -1) {
+         favoritos.splice(indice, 1)
+         remocaoFinal(valor)
+      }
+   }
+
+   // REMOVER PERMANENTEMENTE
+   function remocaoFinal(valor) {
+      valor.classList.add('fadeUP')
+      setTimeout(() => {
+         valor.remove()
+      }, 100)
+   }
 }
 
 
@@ -151,7 +460,7 @@ document.getElementById('input-pesquisar').addEventListener('input', () => {
       sugstButton.addEventListener('click', () => {
 
          // ao clicar numa sugestão
-         mostarResultado(sugstButton.textContent)
+         resultadoTela(sugstButton.textContent)
          rmSugestoes()
       })
    }
@@ -167,321 +476,20 @@ inputpesquisar_Enter.addEventListener('keydown', (event) => {
    // VERIFICAR SE A TECLA PRESSIONADA FOI ENTER
    if (event.key === "Enter") {
       // VERIFICAR SE O INPUT NÃO ESTÁ VAZIO
-      // trim() remove espaços vazios
       if (inputpesquisar_Enter.value !== '') {
 
-
          // EXECUTAR A AÇÃO
-         mostarResultado(normalizar(inputpesquisar_Enter.value))
+         resultadoTela(normalizar(inputpesquisar_Enter.value))
          rmSugestoes()
-
-
          inputpesquisar_Enter.value = ''
       }
    }
 })
 
-// MOSTRAR RESULTADOS BASEADOS NA SUGESTÃO CLICADA
-function mostarResultado(dadosSugestoes) {
-   if (dadosSugestoes !== "") {
-      let dw_resultado = document.querySelector('.dw-resultado')
-      if (dw_resultado) {
-         dw_resultado.innerHTML = ""  // limpar resultados antigos
-
-      }
-
-      // filtrar novamente com base na sugestão
-      let resultadoNativo = itensVendas.filter(r => r.iten.includes(dadosSugestoes) || r.itenDesc.includes(dadosSugestoes))
-      resultadoNativo.forEach(itensNativo => {
-         // criar elementos dos resultados
-         let buttonResultado = document.createElement('button')
-         let imgResultado = document.createElement('img')
-         let detalhesResultado = document.createElement('div')
-         let p_detalheResultado = document.createElement('p')
-         let nameIten = document.createElement('span')
-         let precoIten = document.createElement('span')
-         let iconeResultado = document.createElement('div')
-         let icone = document.createElement('span')
-
-         buttonResultado.dataset.id = itensNativo.id
-         imgResultado.dataset.id = itensNativo.id
-
-         iconeResultado.addEventListener('click', () => {
-            let id = iconeResultado.closest('.itens-resultado').dataset.id
-            adicionarCarrinho(id)
-         })
-
-         buttonResultado.classList.add('itens-resultado')
-         imgResultado.classList.add('img-resultado')
-         detalhesResultado.classList.add('detalhes-resultado')
-         p_detalheResultado.classList.add('p-detalhe-resultado')
-         nameIten.classList.add('name-iten')
-         precoIten.classList.add('preco-iten')
-         icone.classList.add('material-symbols-outlined')
-
-         document.querySelector('.dw-resultado').appendChild(buttonResultado)
-         buttonResultado.appendChild(imgResultado).src = "../IMGS/../" + itensNativo.img
-         buttonResultado.appendChild(detalhesResultado)
-         detalhesResultado.appendChild(p_detalheResultado)
-         p_detalheResultado.appendChild(nameIten).textContent = itensNativo.iten
-         p_detalheResultado.appendChild(precoIten).textContent = itensNativo.preco + "Kz"
-         detalhesResultado.appendChild(iconeResultado)
-         iconeResultado.appendChild(icone).textContent = "add_shopping_cart"
-
-         imgResultado.addEventListener('click', () => {
-            let xb = Number(buttonResultado.dataset.id)
-            enviar(xb)
-         })
-      })
-   }
-}
 
 // FECHAR SUGESTÕES
 function rmSugestoes() {
    document.querySelector('.sugestoes').classList.remove('sugestoes-activo')
-}
-
-
-// ================================
-// ADICIONAR AO CARRINHO
-// ================================
-function adicionarCarrinho(id) {
-   for (let i = 0; i < itensVendas.length; i++) {
-      if (id == itensVendas[i].id) {
-         coresSelecinada = itensVendas[i].cores[0]
-         tamanhoSelionado = itensVendas[i].tamanho[0]
-
-
-         if (coresSelecinada !== "" && tamanhoSelionado !== "") {
-            // verificar se ja existe este item...
-            let existemItem = carrinho.find(existe =>
-               existe.id === itensVendas[i].id && existe.cor === coresSelecinada && existe.tamanho === tamanhoSelionado
-            )
-
-            let xb = 0
-            if (existemItem) {
-               existemItem.quantidade++
-               xb = existemItem.quantidade * existemItem.preco
-               quantidadeItens(existemItem.id, existemItem.cor, existemItem.tamanho, existemItem.quantidade, xb)
-            }
-
-            else {
-               carrinho.push({ id: itensVendas[i].id, iten: itensVendas[i].iten, img: itensVendas[i].img, preco: itensVendas[i].preco, cor: coresSelecinada, descricao: itensVendas[i].itenDesc, tamanho: tamanhoSelionado, quantidade: 1 })
-
-               // criar elementos dinamicos...
-               let dO_itensCarrinho = document.createElement('div')
-               dO_itensCarrinho.classList.add('itensCarrinho')
-               dO_itensCarrinho.dataset.id = itensVendas[i].id
-               dO_itensCarrinho.dataset.nome = itensVendas[i].iten
-               dO_itensCarrinho.dataset.cor = coresSelecinada
-               dO_itensCarrinho.dataset.tamanho = tamanhoSelionado
-
-               let faceItens = document.createElement('div')
-               faceItens.classList.add('face')
-
-               let dw_carrinho = document.createElement('div')
-               dw_carrinho.classList.add('dw_carrinho')
-
-               let img_carrinho = document.createElement('img')
-               img_carrinho.classList.add('img_carrinho')
-               img_carrinho.src = itensVendas[i].img
-               img_carrinho.alt = itensVendas[i].iten
-
-               let nome_iten_carrinho = document.createElement('span')
-               nome_iten_carrinho.classList.add('span_carrinho')
-               nome_iten_carrinho.textContent = itensVendas[i].iten
-
-               let do_ver = document.createElement('div')
-               do_ver.classList.add('do_ver')
-
-               let botao_ver = document.createElement('button')
-               botao_ver.classList.add('botaos_carrinho')
-               botao_ver.classList.add('material-symbols-outlined')
-               botao_ver.textContent = 'arrow_forward_ios'
-
-               botao_ver.addEventListener('click', () => {
-                  let ver_itens_carrinho = document.querySelector('.ver_itens_carrinho')
-                  ver_itens_carrinho.classList.add('ver_itens_carrinho_activo')
-
-                  setTimeout(() => {
-                     let faceOll = document.querySelector('.ver_itens_carrinho .face')
-                     faceOll.classList.add('ok')
-                     console.log(faceOll)
-                  }, 100)
-
-                  ver_detals_carrinho(dO_itensCarrinho.dataset.id, dO_itensCarrinho.dataset.nome, dO_itensCarrinho.dataset.cor, dO_itensCarrinho.dataset.tamanho)
-               })
-
-               let span_ver_detal = document.createElement('span')
-               span_ver_detal.textContent = coresSelecinada
-
-               let dO_quantidade = document.createElement('div')
-               dO_quantidade.classList.add('dO_quantidade')
-
-               let botao_add_qt = document.createElement('button')
-               botao_add_qt.classList.add('material-symbols-outlined')
-               botao_add_qt.textContent = 'add'
-
-               let span_quantidade = document.createElement('span')
-               span_quantidade.classList.add('span_quantidade')
-               span_quantidade.classList.add('itenQuantdade')
-               span_quantidade.textContent = 1
-
-               let botao_reduz_qt = document.createElement('button')
-               botao_reduz_qt.classList.add('material-symbols-outlined')
-               botao_reduz_qt.textContent = 'remove'
-
-               let removerItens = document.createElement('button')
-               removerItens.classList.add('material-symbols-outlined')
-               removerItens.textContent = 'close'
-
-               removerItens.addEventListener('click', () => {
-                  let dadosItens = removerItens.closest('.itensCarrinho')
-
-                  let d_Id = dadosItens.dataset.id
-                  let d_Cor = dadosItens.dataset.cor
-                  let d_Tamanho = dadosItens.dataset.tamanho
-                  console.log(d_Id, d_Cor, d_Tamanho)
-                  eliminarItens(d_Id, d_Cor, d_Tamanho)
-               })
-
-
-               let id_Face_Itens = document.getElementById('faceItens')
-               if (id_Face_Itens) {
-                  id_Face_Itens.appendChild(dO_itensCarrinho)
-                  dO_itensCarrinho.appendChild(faceItens)
-
-                  faceItens.appendChild(dw_carrinho)
-
-                  dw_carrinho.appendChild(img_carrinho)
-                  dw_carrinho.appendChild(nome_iten_carrinho)
-
-                  faceItens.appendChild(do_ver)
-                  do_ver.appendChild(botao_ver)
-                  do_ver.appendChild(span_ver_detal)
-
-                  faceItens.appendChild(dO_quantidade)
-                  dO_quantidade.appendChild(span_quantidade)
-
-                  faceItens.appendChild(removerItens)
-               }
-            }
-         }
-      }
-
-   }
-
-
-   localStorage.setItem("carrinho", JSON.stringify(carrinho))
-   numeros_Itens.textContent = carrinho.length
-
-   let sect_avisoAdicionar = document.querySelector('.sect_avisoAdicionar')
-   if (sect_avisoAdicionar) {
-      sect_avisoAdicionar.classList.add('activo_avisoAdicionar')
-   }
-
-
-   // funcao para exbir a quantidade de itens com as mesmas caracteristicas...
-   function quantidadeItens(q_Id, q_Cor, q_Tamanho, q_quantidade, q_preco) {
-      let q_dOitens = document.querySelector(`.itensCarrinho[data-id="${q_Id}"][data-cor="${q_Cor}"][data-tamanho="${q_Tamanho}"]`)
-
-      let q_itenQuantdade = q_dOitens.querySelector('.itenQuantdade')
-      q_itenQuantdade.textContent = q_quantidade
-   }
-   removerMensgem()
-}
-
-
-// Revmover a mensagem de retiarar do carrinho...
-function removerMensgem() {
-   let activo_avisoAdicionar = document.querySelector('.activo_avisoAdicionar')
-   if (activo_avisoAdicionar) {
-      setTimeout(() => {
-         activo_avisoAdicionar.classList.remove('activo_avisoAdicionar')
-      }, 1000)
-   }
-}
-
-
-// ------------------------------
-// FUNÇÃO: ABRIR A PAGINA DE CARRINHO
-// ------------------------------
-let verItensCarrinho = document.querySelector('.verItensCarrinho')
-if (verItensCarrinho) {
-   verItensCarrinho.addEventListener('click', () => {
-      if (carrinho.length !== 0) {
-         document.querySelector('.carrinho').classList.add('carrinhoActivo')
-         let carrinhoActivo = document.querySelector('.carrinhoActivo')
-
-         if (carrinhoActivo) {
-            let dO_pagar = document.querySelector('.dO_pagar')
-            if (dO_pagar) {
-               setTimeout(() => {
-                  dO_pagar.classList.add('dO_pagar_Activo')
-               }, 1000)
-            }
-         }
-      }
-
-      else {
-         let sect_avisoAdicionar = document.querySelector('.sect_avisoAdicionar')
-         sect_avisoAdicionar.classList.add('activo_avisoAdicionar')
-
-
-         let avisoAdicionar = document.querySelector('.avisoAdicionar')
-         avisoAdicionar.textContent = "carrinho vazio"
-
-         document.querySelector('.processo').classList.add('processo_None')
-
-         setTimeout(() => {
-            document.querySelector('.processo').classList.remove('processo_None')
-            sect_avisoAdicionar.classList.remove('activo_avisoAdicionar')
-         }, 1000)
-      }
-   })
-}
-
-
-// ================================
-// ELIMINAR ITEM DO CARRINHO
-// ================================
-function eliminarItens(d_Id, d_Cor, d_Tamanho) {
-   let d_dOitens = document.querySelector(`.itensCarrinho[data-id="${d_Id}"][data-cor="${d_Cor}"][data-tamanho="${d_Tamanho}"]`)
-   let existeItem = carrinho.find(vef => vef.id == d_Id && vef.cor == d_Cor && vef.tamanho == d_Tamanho)
-   if (existeItem) {
-      if (existeItem.quantidade >= 1) {
-         existeItem.quantidade -= 1
-      }
-
-      if (d_dOitens) {
-         let sQuantidade = d_dOitens.querySelector('.itenQuantdade')
-         sQuantidade.textContent = existeItem.quantidade
-      }
-
-      if (existeItem.quantidade === 0) {
-         let indice = carrinho.findIndex(p => p.id == d_Id && p.cor == d_Cor && p.tamanho == d_Tamanho)
-         if (indice !== -1) {
-            carrinho.splice(indice, 1)
-         }
-
-         if (d_dOitens) {
-
-            d_dOitens.classList.add('dOItens_fadeUP')
-            setTimeout(() => {
-               d_dOitens.remove()
-            }, 100)
-         }
-      }
-   }
-
-   // subtrairPrecos(dOItens.dataset.id)
-
-   numeros_Itens.forEach(n => {
-      if (n) {
-         n.textContent = carrinho.length
-      }
-   })
-   localStorage.setItem("carrinho", JSON.stringify(carrinho))
 }
 
 // ================================
@@ -496,14 +504,14 @@ function ver_detals_carrinho(id, nome, cor, tamanho) {
 
    obs_carrinho.forEach(obs => {
       let obsImg = document.createElement('img')
-      obsImg.src = obs.img
+      obsImg.src = "../IMGS/../" + obs.img
       obsImg.classList.add('obsImg')
 
       let dw_obs_container = document.createElement('div')
       dw_obs_container.classList.add('dw_obs_container')
 
       let obsIten = document.createElement('h1')
-      obsIten.textContent = obs.iten
+      obsIten.textContent = obs.iten + 'ok'
 
       let obs_preco_moeda = document.createElement('p')
       obs_preco_moeda.classList.add('obs_preco_moeda')
@@ -538,3 +546,63 @@ function ver_detals_carrinho(id, nome, cor, tamanho) {
       dw_obs_container.appendChild(obsTamanho)
    })
 }
+
+
+// ============================
+// MANIPULAR LISTA DE CARRINHO
+//==============================
+function verItensLista(valor) {
+   let section_list_geral = document.querySelector('.section_list_geral')
+
+   function addClasses() {
+      section_list_geral.classList.add('section_list_geral_activo')
+   }
+
+   if (valor === 'carrinho') {
+      if (carrinho.length !== 0) {
+         addClasses()
+         mostrarGeral(carrinho)
+      }
+      else { avisoGeral('carrinho') }
+   }
+
+   else if (valor === 'favoritos') {
+      if (favoritos.length !== 0) {
+         addClasses()
+         mostrarGeral(favoritos)
+      }
+
+      else {
+         avisoGeral('')
+      }
+   }
+
+   // REMOVER A LISTA 
+   else if (valor === 'remover') {
+      section_list_geral.classList.remove('section_list_geral_activo')
+   }
+   // ACTULIZAR ITENS
+   actualizar()
+}
+
+
+//==============================
+// ACTUALIZAR ITENS
+//==============================
+function actualizar() {
+   localStorage.setItem("carrinho", JSON.stringify(carrinho))
+
+   let numeros_itens = document.querySelectorAll('.numero_itens')
+   numeros_itens.forEach(numero => {
+      if (numero.dataset.nome == 'favorito') {
+         numero.textContent = favoritos.length
+      }
+
+      if (numero.dataset.nome == 'carrinho') {
+         numero.textContent = carrinho.length
+      }
+   })
+}
+
+// ACTULIZAR ITENS
+actualizar()

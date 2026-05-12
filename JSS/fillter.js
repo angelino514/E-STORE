@@ -3,79 +3,11 @@ import { carrinho } from "./dets.js"
 
 
 /* ================================
-   VARIÁVEIS GLOBAIS DO CARRINHO
-================================ */
-let taxaEntrega = 0
-let totalItens = 0
-let totalMaisTaxa = 0
-
-/* ================================
    CAPTURA PARÂMETROS DA URL
    (usado para filtrar categoria)
 ================================ */
 const params = new URLSearchParams(window.location.search)
 const dadosCategoria = params.get("dadosCategoria")
-
-/* ================================
-   FILTRA ITENS PELA CATEGORIA
-================================ */
-let listaFiltrada = itensVendas.filter(ltf => ltf.categoria === dadosCategoria)
-
-
-/* ================================
-   ELEMENTO QUE MOSTRA NÚMERO DE ITENS NO CARRINHO
-================================ */
-let numeros_Itens = document.querySelector('.numeros_Itens')
-
-/* ================================
-   CRIAÇÃO DINÂMICA DOS ITENS FILTRADOS NA TELA
-   (lista de produtos por categoria)
-================================ */
-listaFiltrada.forEach(filterView => {
-   let itbtFilter = document.createElement('button')
-   let imgFillter = document.createElement('img')
-   let dwFillter = document.createElement('div')
-   let pwFillter = document.createElement('p')
-   let spanFillterNome = document.createElement('span')
-   let spanFillterPreco = document.createElement('span')
-   let dwIocneFillter = document.createElement('div')
-   let icone = document.createElement('span')
-
-   itbtFilter.dataset.id = filterView.id
-   imgFillter.dataset.id = filterView.id
-
-   let container_fillter = document.querySelector('.container-fillter')
-   if (container_fillter) {
-      container_fillter.appendChild(itbtFilter)
-   }
-   itbtFilter.appendChild(imgFillter).src = "../IMGS/../" + filterView.img
-   itbtFilter.appendChild(dwFillter)
-   dwFillter.appendChild(pwFillter)
-   pwFillter.appendChild(spanFillterNome).textContent = filterView.iten
-   pwFillter.appendChild(spanFillterPreco).textContent = `${filterView.preco}Kz`
-   itbtFilter.setAttribute("id", "buttonsFilter")
-   dwFillter.appendChild(dwIocneFillter)
-
-   /* evento de adicionar item ao carrinho */
-   dwIocneFillter.appendChild(icone).textContent = "add_shopping_cart"
-   dwIocneFillter.addEventListener('click', () => {
-      let dadosPincipal = dwIocneFillter.closest('#buttonsFilter')
-      adicionarCarrinho(Number(dadosPincipal.dataset.id))
-   })
-
-   imgFillter.classList.add('imgFillter')
-   dwFillter.classList.add('dwFillter')
-   pwFillter.classList.add('pwFillter')
-   spanFillterNome.classList.add('spanFillter')
-   spanFillterPreco.classList.add('spanFillter')
-   dwIocneFillter.classList.add('dwIocneFillter')
-   icone.classList.add('material-symbols-outlined')
-
-   /* navegação para página de detalhes */
-   imgFillter.addEventListener('click', () => {
-      enviarFillter(itbtFilter.dataset.id)
-   })
-})
 
 
 /* ================================
@@ -88,315 +20,145 @@ for (let i = 0; i < itensVendas.length; i++) {
    }
 }
 
-
 /* ================================
    NAVBAR FILTRO POR CATEGORIA
 ================================ */
 tipoCategoria.forEach(tipo => {
    let button_filter = document.createElement('button')
+   button_filter.textContent = tipo.categoria
 
    let navbar_fillter = document.querySelector('.navbar-fillter')
+
+
    if (navbar_fillter) {
-      navbar_fillter.appendChild(button_filter).textContent = tipo.categoria
+      navbar_fillter.appendChild(button_filter)
       button_filter.classList.add('button_filter')
+
       button_filter.addEventListener('click', () => {
-         let valorButon = button_filter.textContent
-         dadosFilter(valorButon)
+         geralFilter(button_filter.textContent)
       })
    }
 })
 
 
-/* ================================
-   FUNÇÃO DE FILTRAGEM DE PRODUTOS POR CATEGORIA
-================================ */
-function dadosFilter(dadosEspecifico) {
+//=======================================================
+// FUNCAO FILTRAR OS ITENS DINAMICOS 
+//====================================================
+function geralFilter(valor) {
+   //PRRPARAR O CONTAINER PARA RECEBER NOVOS VALORES 
    let container_fillter = document.querySelector('.container-fillter')
-   if (container_fillter) {
-      container_fillter.innerHTML = ""
-   }
+   container_fillter.innerHTML = ''
 
-   let itensFilter = itensVendas.filter(itf => itf.categoria === dadosEspecifico)
-   itensFilter.forEach(novoFilter => {
+   // FILTRAR ITENS COM BASE NO VALOR CLICADO
+   let listaFiltrada = itensVendas.filter(p => p.categoria === valor)
+
+   listaFiltrada.forEach(filterView => {
 
       let itbtFilter = document.createElement('button')
-      itbtFilter.dataset.id = novoFilter.id
       itbtFilter.classList.add('itbtFilter')
+      itbtFilter.setAttribute("id", "buttonsFilter")
+      itbtFilter.dataset.id = filterView.id
 
       let imgFillter = document.createElement('img')
+      imgFillter.dataset.id = filterView.id
       imgFillter.classList.add('imgFillter')
+      imgFillter.src = "../IMGS/../" + filterView.img
 
       let dwFillter = document.createElement('div')
-      let pwFillter = document.createElement('p')
-      let spanFillterNome = document.createElement('span')
-      let spanFillterPreco = document.createElement('span')
+      dwFillter.classList.add('dwFillter')
 
-      /* adicionar item ao carrinho */
+      let pwFillter = document.createElement('p')
+      pwFillter.classList.add('pwFillter')
+
+
+      let spanFillterNome = document.createElement('span')
+      spanFillterNome.textContent = filterView.iten
+      spanFillterNome.classList.add('spanFillter')
+
+
+      let spanFillterPreco = document.createElement('span')
+      spanFillterPreco.textContent = filterView.preco + 'Kz'
+      spanFillterPreco.classList.add('spanFillter')
+
       let dwIocneFillter = document.createElement('div')
-      dwIocneFillter.addEventListener('click', () => {
-         let id = dwIocneFillter.closest('.itbtFilter').dataset.id
-         adicionarCarrinho(id)
-      })
+      dwIocneFillter.classList.add('dwIocneFillter')
 
       let icone = document.createElement('span')
+      icone.classList.add('material-symbols-outlined')
+      icone.textContent = 'add_shopping_cart'
+
+
 
       if (container_fillter) {
          container_fillter.appendChild(itbtFilter)
       }
-      itbtFilter.appendChild(imgFillter).src = "../IMGS/../" + novoFilter.img
+      itbtFilter.appendChild(imgFillter)
       itbtFilter.appendChild(dwFillter)
       dwFillter.appendChild(pwFillter)
-      pwFillter.appendChild(spanFillterNome).textContent = novoFilter.iten
-      pwFillter.appendChild(spanFillterPreco).textContent = `${novoFilter.preco}Kz`
-      itbtFilter.setAttribute("id", "buttonsFilter")
+      pwFillter.appendChild(spanFillterNome)
+      pwFillter.appendChild(spanFillterPreco)
       dwFillter.appendChild(dwIocneFillter)
+      dwIocneFillter.appendChild(icone)
 
-      dwIocneFillter.appendChild(icone).textContent = "add_shopping_cart"
+      //EVENTO PARA ADICIONAR AO CARRINHO
+      dwIocneFillter.addEventListener('click', () => {
+         adicionarItens({ id: Number(dwIocneFillter.closest('.itbtFilter').dataset.id), dados: 'carrinho' })
+      })
 
-      dwFillter.classList.add('dwFillter')
-      pwFillter.classList.add('pwFillter')
-      spanFillterNome.classList.add('spanFillter')
-      spanFillterPreco.classList.add('spanFillter')
-      dwIocneFillter.classList.add('dwIocneFillter')
-      icone.classList.add('material-symbols-outlined')
-
-      /* navegação para detalhes do item */
-      imgFillter.dataset.id = novoFilter.id
+      /* navegação para página de detalhes */
       imgFillter.addEventListener('click', () => {
          enviarFillter(itbtFilter.dataset.id)
       })
    })
 }
+geralFilter(dadosCategoria)
 
-
-/* ================================
-   NAVEGAÇÃO PARA PÁGINA DE DETALHES
-================================ */
-function enviarFillter(id) {
-   window.location.href = "CPSS/../dets.html?id=" + id
-}
-
-
-
-/* ================================
-   ABRIR CARRINHO
-================================ */
-let verItensCarrinho = document.querySelector('.verItensCarrinho')
-if (verItensCarrinho) {
-   verItensCarrinho.addEventListener('click', () => {
-
-      /* se tiver itens no carrinho */
-      if (carrinho.length !== 0) {
-         document.querySelector('.carrinho').classList.add('carrinhoActivo')
-         let carrinhoActivo = document.querySelector('.carrinhoActivo')
-
-         if (carrinhoActivo) {
-            let dO_pagar = document.querySelector('.dO_pagar')
-            if (dO_pagar) {
-               setTimeout(() => {
-                  dO_pagar.classList.add('dO_pagar_Activo')
-               }, 1000)
-            }
-         }
-      }
-
-      /* se carrinho estiver vazio */
-      else {
-         avisoGeral('carrinho')
-      }
-   })
-}
-
-
-/* ================================
-   FECHAR CARRINHO
-================================ */
-let voltar = document.querySelector('.voltar')
-if (voltar) {
-   voltar.addEventListener('click', () => {
-      document.querySelector('.carrinho').classList.remove('carrinhoActivo')
-   })
-}
-
-/* ================================
-   VOLTAR PARA PÁGINA PRINCIPAL
-================================ */
-let button_Back = document.querySelector('.button_Back')
-if (button_Back) {
-   button_Back.addEventListener('click', () => {
-      window.location.href = '../index.html'
-   })
-}
 
 
 let coresSelecinada = ""
 let tamanhoSelionado = ""
 
+//=======================================
+// ADICIONAR ITENS A LISTA 
+//======================================
+function adicionarItens({ id, dados }) {
 
-/* ================================
-   ADICIONAR ITENS AO CARRINHO
-================================ */
-function adicionarCarrinho(id) {
    for (let i = 0; i < itensVendas.length; i++) {
-      if (id == itensVendas[i].id) {
+      if (id === itensVendas[i].id) {
+
          coresSelecinada = itensVendas[i].cores[0]
          tamanhoSelionado = itensVendas[i].tamanho[0]
 
 
-         if (coresSelecinada !== "" && tamanhoSelionado !== "") {
-            /* verifica se já existe item igual no carrinho */
-            let existemItem = carrinho.find(existe =>
-               existe.id === itensVendas[i].id && existe.cor === coresSelecinada && existe.tamanho === tamanhoSelionado
-            )
+         if (coresSelecinada != '' && tamanhoSelionado != '') {
+            // =======================================
+            // DECISAO ONDE DEVE SER ADICIONADO O ITEM 
+            //=========================================
+            if (dados == 'carrinho') {
 
-            let xb = 0
-            if (existemItem) {
-               existemItem.quantidade++
-               xb = existemItem.quantidade * existemItem.preco
-               quantidadeItens(existemItem.id, existemItem.cor, existemItem.tamanho, existemItem.quantidade, xb)
-            }
+               //VERIFICAR SE EXISTE NO CARRINHO
+               let existeItem = carrinho.find(p =>
+                  p.id == id && p.cor == coresSelecinada && p.tamanho == tamanhoSelionado
+               )
 
-            else {
-               carrinho.push({ id: itensVendas[i].id, iten: itensVendas[i].iten, img: itensVendas[i].img, preco: itensVendas[i].preco, cor: coresSelecinada, descricao: itensVendas[i].itenDesc, tamanho: tamanhoSelionado, quantidade: 1 })
+               //SE EXISTE NO CARRINHO ENCREMENTA A QUANTIDADE 
+               if (existeItem && dados == 'carrinho') { existeItem.quantidade++ }
 
-               /* criação dinâmica do card do carrinho */
-               let dO_itensCarrinho = document.createElement('div')
-               dO_itensCarrinho.classList.add('itensCarrinho')
-               dO_itensCarrinho.dataset.id = itensVendas[i].id
-               dO_itensCarrinho.dataset.nome = itensVendas[i].iten
-               dO_itensCarrinho.dataset.cor = coresSelecinada
-               dO_itensCarrinho.dataset.tamanho = tamanhoSelionado
-
-               let faceItens = document.createElement('div')
-               faceItens.classList.add('face')
-
-               let dw_carrinho = document.createElement('div')
-               dw_carrinho.classList.add('dw_carrinho')
-
-               let img_carrinho = document.createElement('img')
-               img_carrinho.classList.add('img_carrinho')
-               img_carrinho.src = itensVendas[i].img
-               img_carrinho.alt = itensVendas[i].iten
-
-               let nome_iten_carrinho = document.createElement('span')
-               nome_iten_carrinho.classList.add('span_carrinho')
-               nome_iten_carrinho.textContent = itensVendas[i].iten
-
-               let do_ver = document.createElement('div')
-               do_ver.classList.add('do_ver')
-
-               let botao_ver = document.createElement('button')
-               botao_ver.classList.add('botaos_carrinho')
-               botao_ver.classList.add('material-symbols-outlined')
-               botao_ver.textContent = 'arrow_forward_ios'
-
-               botao_ver.addEventListener('click', () => {
-                  let ver_itens_carrinho = document.querySelector('.ver_itens_carrinho')
-                  ver_itens_carrinho.classList.add('ver_itens_carrinho_activo')
-
-                  setTimeout(() => {
-                     let faceOll = document.querySelector('.ver_itens_carrinho .face')
-                     faceOll.classList.add('ok')
-                  }, 100)
-
-                  ver_detals_carrinho(dO_itensCarrinho.dataset.id, dO_itensCarrinho.dataset.nome, dO_itensCarrinho.dataset.cor, dO_itensCarrinho.dataset.tamanho)
-               })
-
-               let span_ver_detal = document.createElement('span')
-               span_ver_detal.textContent = coresSelecinada
-
-               let dO_quantidade = document.createElement('div')
-               dO_quantidade.classList.add('dO_quantidade')
-
-               let botao_add_qt = document.createElement('button')
-               botao_add_qt.classList.add('material-symbols-outlined')
-               botao_add_qt.textContent = 'add'
-
-               let span_quantidade = document.createElement('span')
-               span_quantidade.classList.add('span_quantidade')
-               span_quantidade.classList.add('itenQuantdade')
-               span_quantidade.textContent = 1
-
-               let botao_reduz_qt = document.createElement('button')
-               botao_reduz_qt.classList.add('material-symbols-outlined')
-               botao_reduz_qt.textContent = 'remove'
-
-               let removerItens = document.createElement('button')
-               removerItens.classList.add('material-symbols-outlined')
-               removerItens.textContent = 'delete'
-
-               removerItens.addEventListener('click', () => {
-                  let dadosItens = removerItens.closest('.itensCarrinho')
-
-                  let d_Id = dadosItens.dataset.id
-                  let d_Cor = dadosItens.dataset.cor
-                  let d_Tamanho = dadosItens.dataset.tamanho
-                  console.log(d_Id, d_Cor, d_Tamanho)
-                  eliminarItens(d_Id, d_Cor, d_Tamanho)
-               })
-
-
-               let id_Face_Itens = document.getElementById('faceItens')
-               if (id_Face_Itens) {
-                  id_Face_Itens.appendChild(dO_itensCarrinho)
-                  dO_itensCarrinho.appendChild(faceItens)
-
-                  faceItens.appendChild(dw_carrinho)
-
-                  dw_carrinho.appendChild(img_carrinho)
-                  dw_carrinho.appendChild(nome_iten_carrinho)
-
-                  faceItens.appendChild(do_ver)
-                  do_ver.appendChild(botao_ver)
-                  do_ver.appendChild(span_ver_detal)
-
-                  faceItens.appendChild(dO_quantidade)
-                  dO_quantidade.appendChild(span_quantidade)
-
-                  faceItens.appendChild(removerItens)
+               // SE NAO EXISTE ADICIONA UM ITEM AO CARRINHO
+               else {
+                  carrinho.push({ id: itensVendas[i].id, iten: itensVendas[i].iten, img: itensVendas[i].img, preco: itensVendas[i].preco, cor: coresSelecinada, descricao: itensVendas[i].itenDesc, tamanho: tamanhoSelionado, quantidade: 1, dados: dados })
                }
             }
+
+            //MESSAGEM
+            avisoGeral('add')
          }
       }
-
    }
 
-   guardar()
-   avisoGeral('add')
-   localStorage.setItem("carrinho", JSON.stringify(carrinho))
-   numeros_Itens.textContent = carrinho.length
 
-
-   /* ================================
-   FUNÇÃO PARA ATUALIZAR QUANTIDADE
-================================ */
-   function quantidadeItens(q_Id, q_Cor, q_Tamanho, q_quantidade, q_preco) {
-      let q_dOitens = document.querySelector(`.itensCarrinho[data-id="${q_Id}"][data-cor="${q_Cor}"][data-tamanho="${q_Tamanho}"]`)
-
-      let q_itenQuantdade = q_dOitens.querySelector('.itenQuantdade')
-      q_itenQuantdade.textContent = q_quantidade
-   }
-}
-
-
-
-function mensagemExiste(valor, valor1) {
-   let sect_avisoAdicionar = document.querySelector('.sect_avisoAdicionar')
-   sect_avisoAdicionar.classList.add('activo_avisoAdicionar')
-
-   let processo = document.querySelector('.processo')
-   let avisoAdicionar = document.querySelector('.avisoAdicionar')
-
-   if (valor == 'add_favorito' && valor1 == 'new') {
-      avisoAdicionar.textContent = 'Item adicionado aos favoritos'
-   }
-
-   if (valor == 'add_favorito' && valor1 == 'older') {
-      avisoAdicionar.textContent = 'Esse item já existe'
-      processo.classList.add('processo_none')
-   }
-
-   removerMensgem()
+   // ACTULIZAR ITENS
+   actualizar()
 }
 
 // ============================
@@ -409,17 +171,25 @@ function avisoGeral(valor) {
    let processo = document.querySelector('.processo')
    let avisoAdicionar = document.querySelector('.avisoAdicionar')
 
-   if (valor == 'carrinho') {
+   if (valor == 'favorito') {
+      avisoAdicionar.textContent = 'lista vazia'
+      processo.classList.add('processo_none')
+   }
+
+   else if (valor == 'carrinho') {
       avisoAdicionar.textContent = 'carrinho vazio'
       processo.classList.add('processo_none')
    }
 
    else if (valor == 'add') {
       avisoAdicionar.textContent = 'item adicionado ao carrinho'
-      processo.classList.remove('processo_none')
    }
    removerMensgem()
+
+   // ACTULIZAR ITENS
+   actualizar()
 }
+
 
 // ================================
 // LIMPAR MENSAGENS
@@ -433,676 +203,242 @@ function removerMensgem() {
    }
 }
 
+// ======================================
+// FUNCAO PARA MANIPULAR A LISTA DE ITENS
+//=======================================
+const verItens = document.querySelectorAll('.verItens')
+verItens.forEach(iten => {
+   iten.addEventListener('click', () => {
+      verItensLista(iten.value)
+   })
+})
 
-/* ================================
-   DETALHES DO ITEM NO CARRINHO
-================================ */
-let art_container_ver = document.querySelector('.art_container_ver')
-function ver_detals_carrinho(id, nome, cor, tamanho) {
-   art_container_ver.innerHTML = ''
-   let obs_carrinho = carrinho.filter(p =>
-      p.id == id && p.iten == nome && p.cor == cor && p.tamanho == tamanho
-   )
+function verItensLista(valor) {
+   let section_list_geral = document.querySelector('.section_list_geral')
 
-   obs_carrinho.forEach(obs => {
-      let obsImg = document.createElement('img')
-      obsImg.src = obs.img
-      obsImg.classList.add('obsImg')
+   function addClasses() {
+      section_list_geral.classList.add('section_list_geral_activo')
+   }
 
-      let dw_obs_container = document.createElement('div')
-      dw_obs_container.classList.add('dw_obs_container')
+   //COMPARAR COM BASE NO VALOR DE CADA BUTTON CLICADO
+   if (valor === 'carrinho') {
+      if (carrinho.length !== 0) {
+         //  addClasses()
+         mostrarGeral(carrinho)
+      }
+      else { avisoGeral('carrinho') }
+   }
 
-      let obsIten = document.createElement('h1')
-      obsIten.textContent = obs.iten
+   // REMOVER A LISTA 
+   else if (valor === 'remover') {
+      section_list_geral.classList.remove('section_list_geral_activo')
+   }
+   // ACTULIZAR ITENS
+   actualizar()
+}
 
-      let obs_preco_moeda = document.createElement('p')
-      obs_preco_moeda.classList.add('obs_preco_moeda')
+//======================
+//ELEMENTOS DINAMICOS DAS LISTAS
+//===================
+function mostrarGeral(itensGerais) {
 
-      let obsPreco = document.createElement('h2')
-      obsPreco.classList.add('obsPreco')
-      obsPreco.textContent = obs.preco * obs.quantidade
+   // PREPARAR A LISTA PARA RECEBER NOVOS ITENS
+   let container_auto_list = document.querySelector('.container_auto_list')
+   container_auto_list.innerHTML = ''
 
-      let obsMoeda = document.createElement('span')
-      obsMoeda.textContent = 'Kz'
+   itensGerais.forEach(itengeral => {
 
-      let obsDescricao = document.createElement('p')
-      obsDescricao.textContent = obs.descricao
+      let div_container_list = document.createElement('div')
+      div_container_list.classList.add('div_container_list')
+      div_container_list.dataset.tipo = itengeral.dados
+      div_container_list.dataset.nome = itengeral.iten
+      div_container_list.dataset.id = itengeral.id
+      div_container_list.dataset.cor = itengeral.cor
+      div_container_list.dataset.tamanho = itengeral.tamanho
 
-      let obsCor = document.createElement('span')
-      obsCor.textContent = 'cor: ' + obs.cor
+      let itens_container_list = document.createElement('div')
+      itens_container_list.classList.add('itens_container_list')
+      itens_container_list.classList.add('fadeUP_list')
 
-      let obsTamanho = document.createElement('span')
-      obsTamanho.textContent = 'tamanho: ' + obs.tamanho
+      let itens_img_list = document.createElement('img')
+      itens_img_list.classList.add('itens_img_list')
+      itens_img_list.src = '../IMGS/../' + itengeral.img
+
+      let itens_texto_list = document.createElement('p')
+      itens_texto_list.classList.add('itens_texto_list')
+      itens_texto_list.textContent = itengeral.iten
+
+      let container_qt_list = document.createElement('div')
+      container_qt_list.classList.add('container_qt_list')
+      container_qt_list.textContent = itengeral.quantidade
+      container_qt_list.classList.add('fadeUP_list')
 
 
-      art_container_ver.appendChild(obsImg)
-      art_container_ver.appendChild(dw_obs_container)
-      dw_obs_container.appendChild(obsIten)
+      let container_more_list = document.createElement('button')
+      container_more_list.classList.add('container_more_list')
+      container_more_list.textContent = ':'
+      container_more_list.classList.add('fadeUP_list')
 
-      dw_obs_container.appendChild(obs_preco_moeda)
-      obs_preco_moeda.appendChild(obsPreco)
-      obs_preco_moeda.appendChild(obsMoeda)
+      let remover_itens_list = document.createElement('button')
+      remover_itens_list.classList.add('remover_itens_list')
+      remover_itens_list.classList.add('material-symbols-outlined')
+      remover_itens_list.textContent = 'delete'
+      remover_itens_list.classList.add('fadeUP_list')
 
-      dw_obs_container.appendChild(obsDescricao)
-      dw_obs_container.appendChild(obsCor)
-      dw_obs_container.appendChild(obsTamanho)
+      //=====================================
+      // ENVIAR OS DADOS COM BASE DO TIPO DE LISTA
+      //======================================
+      if (itengeral.dados == 'favoritos') {
+         remover_itens_list.addEventListener('click', () => {
+            // ENVIAR OS DADOS DO ELEMENTO PAI 
+            removerItensList(remover_itens_list.closest('.div_container_list'))
+
+            // ACTULIZAR ITENS
+            actualizar()
+         })
+      }
+
+      if (itengeral.dados == 'carrinho') {
+         remover_itens_list.addEventListener('click', () => {
+            // ENVIAR OS DADOS DO ELEMENTO PAI 
+            removerItensList(remover_itens_list.closest('.div_container_list'))
+
+            // ACTULIZAR ITENS
+            actualizar()
+         })
+      }
+
+
+      let container_auto_list = document.querySelector('.container_auto_list')
+
+      container_auto_list.appendChild(div_container_list)
+      div_container_list.appendChild(itens_container_list)
+      itens_container_list.appendChild(itens_img_list)
+      itens_container_list.appendChild(itens_texto_list)
+
+      div_container_list.appendChild(container_qt_list)
+      div_container_list.appendChild(container_more_list)
+      div_container_list.appendChild(remover_itens_list)
    })
 }
 
+//=============================
+//REMOVER ITENS DA LISTA FAVORITO E CARRINHO
+//=============================
+function removerItensList(valor) {
+   let valorQuantidade = valor.querySelector('.container_qt_list')
 
-/* ================================
-   ELIMINAR ITEM DO CARRINHO
-================================ */
-function eliminarItens(d_Id, d_Cor, d_Tamanho) {
-   let d_dOitens = document.querySelector(`.itensCarrinho[data-id="${d_Id}"][data-cor="${d_Cor}"][data-tamanho="${d_Tamanho}"]`)
-   let existeItem = carrinho.find(vef => vef.id == d_Id && vef.cor == d_Cor && vef.tamanho == d_Tamanho)
-   if (existeItem) {
-      if (existeItem.quantidade >= 1) {
-         existeItem.quantidade -= 1
-      }
+   // DADOS DO ITEN QUE FOI CLICADO
+   let id = valor.dataset.id
+   let iten = valor.dataset.nome
+   let cor = valor.dataset.cor
+   let tamanho = valor.dataset.tamanho
+   let tipo = valor.dataset.tipo
 
-      if (d_dOitens) {
-         let sQuantidade = d_dOitens.querySelector('.itenQuantdade')
-         sQuantidade.textContent = existeItem.quantidade
-      }
+   // VERIFICAR SE EXISTE E PERTENCE A QUE LISTA 
+   if (valor.dataset.tipo == 'carrinho') {
+      let existeItem = carrinho.find(p =>
+         p.id == id && p.cor == cor
+         && p.tamanho == tamanho &&
+         p.iten == iten && p.dados == tipo
+      )
 
-      if (existeItem.quantidade === 0) {
-         let indice = carrinho.findIndex(p => p.id == d_Id && p.cor == d_Cor && p.tamanho == d_Tamanho)
-         if (indice !== -1) {
-            carrinho.splice(indice, 1)
+      // DECREMENTAR SE EXISTE O ITEN NA LISTA DO CARRINHO
+      decrementar(existeItem)
+   }
+
+   // VERIFICAR SE EXISTE E PERTENCE A QUE LISTA DOS FAVORITOS
+   if (valor.dataset.tipo == 'favoritos') {
+      let existeItem = favoritos.find(p =>
+         p.id == id && p.cor == cor
+         && p.tamanho == tamanho &&
+         p.iten == iten && p.dados == tipo
+      )
+
+      // DECREMENTAR SE EXISTE O ITEN NA LISTA
+      decrementar(existeItem)
+   }
+
+   function decrementar(existeItem) {
+      // DECREMENTAR A QUANTIDADE DE ITENS
+      if (existeItem) {
+         if (existeItem.quantidade >= 1) {
+            existeItem.quantidade -= 1
          }
 
-         if (d_dOitens) {
+         // EXIBIR NO HTML
+         valorQuantidade.textContent = existeItem.quantidade
 
-            d_dOitens.classList.add('dOItens_fadeUP')
-            setTimeout(() => {
-               d_dOitens.remove()
-            }, 100)
+         if (existeItem.quantidade === 0) {
+
+            // SE A QUANTIDADE FOR IGUAL A ZERO ATIVA A FUNACAO REMOCAO ORIGINAL
+            remocaoOriginal(id, iten, cor, tamanho, tipo, valor)
          }
       }
    }
+}
 
-   numeros_Itens.textContent = carrinho.length
+//=======================================================
+// FUNCAO : POSICAO DO ITEN NA LISTA E REMOCAO PERMANENTE
+//========================================================
+function remocaoOriginal(id, iten, cor, tamanho, tipo, valor) {
+
+   if (tipo == 'carrinho') {
+      // PROCURAR A POSICAO DO ITEN NO CARRINHO
+      let indice = carrinho.findIndex(p =>
+         p.id == id &&
+         p.cor == cor &&
+         p.tamanho == tamanho &&
+         p.dados == tipo
+      )
+      if (indice !== -1) {
+         carrinho.splice(indice, 1)
+         remocaoFinal(valor)
+      }
+   }
+
+   if (tipo == 'favoritos') {
+      // PROCURAR A POSICAO DO ITEN NOS FAVORITOS
+      let indice = favoritos.findIndex(p =>
+         p.id == id &&
+         p.cor == cor &&
+         p.tamanho == tamanho &&
+         p.dados == tipo
+      )
+      if (indice !== -1) {
+         favoritos.splice(indice, 1)
+         remocaoFinal(valor)
+      }
+   }
+
+   // REMOVER PERMANENTEMENTE
+   function remocaoFinal(valor) {
+      valor.classList.add('fadeUP')
+      setTimeout(() => {
+         valor.remove()
+      }, 100)
+   }
+}
+
+/* ================================
+   NAVEGAÇÃO PARA PÁGINA DE DETALHES
+================================ */
+function enviarFillter(id) {
+   window.location.href = "CPSS/../dets.html?id=" + id
+}
+
+//==============================
+// ACTUALIZAR ITENS
+//=============================
+function actualizar() {
    localStorage.setItem("carrinho", JSON.stringify(carrinho))
+
+   let numeros_itens = document.querySelectorAll('.numero_itens')
+   numeros_itens.forEach(numero => {
+      if (numero.dataset.nome == 'carrinho') {
+         numero.textContent = carrinho.length
+      }
+   })
 }
-
-/* ================================
-   FINALIZAÇÃO DE COMPRA
-================================ */
-function detalhesCompra() {
-
-   /* criação de UI de pagamento, envio, cidade, inputs etc */
-   const metodoPagemento = ["Unitel Money", "Multicaixa Express", "IBAN"]
-   const metodoEnvio = ["AngoEnvio", "TWENDE", "EVAN"] // Metodo de envio...
-   const cidades = ["Huambo", "Menongue"]
-
-   let face_Compra = document.getElementById('face_Compra')
-
-   // Criar elementos dinamiocos para detalhes da compra...
-   let dO_dt_Compra = document.createElement('div')
-   dO_dt_Compra.classList.add('dO_dt_Compra')
-
-   let dO_spanTotal = document.createElement('div')
-   dO_spanTotal.classList.add('dO_spanTotal')
-
-   let spanTotal = document.createElement('span')
-   spanTotal.classList.add('spanTotal')
-
-   let dO_pagamento_title = document.createElement('p')
-   dO_pagamento_title.classList.add('dO_pagamento_title')
-
-   let dO_metPagamento = document.createElement('div')
-   dO_metPagamento.classList.add('dO_metPagamento')
-
-   let dadosPagamento = document.createElement('div')
-   dadosPagamento.classList.add('dadosPagamento')
-
-   let nome_conta = document.createElement('p')
-   nome_conta.classList.add('nomeConta')
-
-   let numero_conta = document.createElement('p')
-   numero_conta.classList.add('numeroConta')
-
-   for (let pa = 0; pa < metodoPagemento.length; pa++) {
-      let labelPgamento = document.createElement('label')
-      labelPgamento.classList.add('labelPgamento')
-      labelPgamento.setAttribute("for", metodoPagemento[pa])
-      labelPgamento.dataset.nome = metodoPagemento[pa]
-
-
-      let radioPagmento = document.createElement('input')
-      radioPagmento.type = 'radio'
-      radioPagmento.value = metodoPagemento[pa]
-      radioPagmento.id = metodoPagemento[pa]
-      radioPagmento.classList.add('input_None')
-      radioPagmento.classList.add('radioPagmento')
-      radioPagmento.name = 'pagamento'
-
-      // condicao para deixar o primeiro item marcado
-      if (radioPagmento.value == metodoPagemento[0]) {
-         radioPagmento.checked = true
-      }
-
-      dO_metPagamento.appendChild(labelPgamento).textContent = metodoPagemento[pa]
-      dO_metPagamento.appendChild(radioPagmento)
-   }
-
-
-   let dO_pagamento_Envio = document.createElement('p')
-   dO_pagamento_Envio.classList.add('dO_pagamento_title')
-
-   let dO_Envio = document.createElement('div')
-   dO_Envio.classList.add('dO_Envio')
-
-   for (let me = 0; me < metodoEnvio.length; me++) {
-      let labelEnvio = document.createElement('label')
-      labelEnvio.classList.add('labelEnvio')
-      labelEnvio.dataset.nome = metodoEnvio[me]
-      labelEnvio.setAttribute("for", metodoEnvio[me])
-
-      let radioEnvio = document.createElement('input')
-      radioEnvio.type = 'radio'
-      radioEnvio.id = metodoEnvio[me]
-      radioEnvio.name = 'envio'
-      radioEnvio.value = metodoEnvio[me]
-      radioEnvio.classList.add('radioEnvio')
-      radioEnvio.classList.add('input_None')
-
-      if (radioEnvio.value == metodoEnvio[0]) {
-         radioEnvio.checked = true
-      }
-
-      dO_Envio.appendChild(labelEnvio).textContent = metodoEnvio[me]
-      dO_Envio.appendChild(radioEnvio)
-   }
-
-   let pO_rastreio = document.createElement('p')
-   pO_rastreio.classList.add('rastreio')
-
-   let selecionarCidade = document.createElement('p')
-   selecionarCidade.classList.add('dO_pagamento_title')
-
-   let dO_Cidade = document.createElement('div')
-   dO_Cidade.classList.add('dO_Cidade')
-
-   for (let d = 0; d < cidades.length; d++) {
-      let labelCidade = document.createElement('label')
-      labelCidade.classList.add('labelCidade')
-      labelCidade.dataset.nome = cidades[d]
-      labelCidade.setAttribute("for", cidades[d])
-
-      let radioCidade = document.createElement('input')
-      radioCidade.type = 'radio'
-      radioCidade.id = cidades[d]
-      radioCidade.name = 'cidade'
-      radioCidade.value = cidades[d]
-      radioCidade.classList.add('radioCidade')
-      radioCidade.classList.add('input_None')
-
-      if (radioCidade.value == cidades[0]) {
-         radioCidade.checked = true
-      }
-
-      dO_Cidade.appendChild(labelCidade).textContent = cidades[d]
-      dO_Cidade.appendChild(radioCidade)
-   }
-
-   let dO_InfCidade = document.createElement('div')
-   dO_InfCidade.classList.add('dO_InfCidade')
-
-   let p_entregaEstimada = document.createElement('p')
-   p_entregaEstimada.classList.add('entregaEstimada')
-
-   let p_entrega = document.createElement('p')
-   p_entrega.classList.add('entrega')
-
-   // div pai para os inputs  dados do usuario...
-   let dO_daddosUsuario = document.createElement('div')
-   dO_daddosUsuario.classList.add('dO_daddosUsuario')
-
-   let wa_dO_contactos = document.createElement('div')
-   wa_dO_contactos.classList.add('dO_contactos')
-
-   let wa_labelUsuario = document.createElement('label')
-   wa_labelUsuario.classList.add('labelUsuario')
-   wa_labelUsuario.setAttribute("for", 'numerosWatsapp')
-
-   let wa_inputDadosUser = document.createElement('article')
-   wa_inputDadosUser.classList.add('inputDadosUser')
-
-   let wa_aviso = document.createElement('p')
-   wa_aviso.classList.add('aviso')
-
-   let wa_input = document.createElement('input')
-   wa_input.type = "text/number"
-   wa_input.id = "numerosWatsapp"
-   wa_input.classList.add('face')
-   wa_input.classList.add('whatsApp')
-
-   let nu_dO_contactos = document.createElement('div')
-   nu_dO_contactos.classList.add('dO_contactos')
-
-   let nu_labelUsuario = document.createElement('label')
-   nu_labelUsuario.classList.add('labelUsuario')
-   nu_labelUsuario.setAttribute("for", 'numerosTelefone')
-
-   let nu_inputDadosUser = document.createElement('article')
-   nu_inputDadosUser.classList.add('inputDadosUser')
-
-   let nu_aviso = document.createElement('p')
-   nu_aviso.classList.add('aviso')
-
-   let nu_input = document.createElement('input')
-   nu_input.type = "text/number"
-   nu_input.id = "numerosTelefone"
-   nu_input.classList.add('face')
-   nu_input.classList.add('numeroTelefone')
-
-
-   let gm_dO_contactos = document.createElement('div')
-   gm_dO_contactos.classList.add('dO_contactos')
-
-   let gm_labelUsuario = document.createElement('label')
-   gm_labelUsuario.classList.add('labelUsuario')
-   gm_labelUsuario.setAttribute("for", 'gmail')
-
-   let gm_inputDadosUser = document.createElement('article')
-   gm_inputDadosUser.classList.add('inputDadosUser')
-
-   let gm_aviso = document.createElement('p')
-   gm_aviso.classList.add('aviso')
-
-   let gm_input = document.createElement('input')
-   gm_input.type = "email"
-   gm_input.id = "gmail"
-   gm_input.classList.add('face')
-   gm_input.classList.add('g_mail')
-
-
-   let en_dO_contactos = document.createElement('div')
-   en_dO_contactos.classList.add('dO_contactos')
-
-   let en_labelUsuario = document.createElement('label')
-   en_labelUsuario.classList.add('labelUsuario')
-   en_labelUsuario.setAttribute("for", 'endereco')
-
-   let en_inputDadosUser = document.createElement('article')
-   en_inputDadosUser.classList.add('inputDadosUser')
-
-   let en_aviso = document.createElement('p')
-   en_aviso.classList.add('aviso')
-
-   let en_input = document.createElement('input')
-   en_input.type = "text"
-   en_input.id = "endereco"
-   en_input.classList.add('face')
-   en_input.classList.add('endereco')
-
-   let dO_buttonSubmit = document.createElement('div')
-   dO_buttonSubmit.classList.add('dO_buttonSubmit')
-
-   let b_buttonSubmit = document.createElement('button')
-   b_buttonSubmit.classList.add('buttonSubmit')
-
-   if (face_Compra) {
-
-      face_Compra.appendChild(dO_dt_Compra)
-      dO_dt_Compra.appendChild(dO_spanTotal)
-      dO_spanTotal.appendChild(spanTotal)
-      dO_dt_Compra.appendChild(dO_pagamento_title).innerHTML = "Selecionar Metódo de pagamento"
-      dO_dt_Compra.appendChild(dO_metPagamento)
-      dO_dt_Compra.appendChild(dadosPagamento)
-      dadosPagamento.appendChild(nome_conta)
-      dadosPagamento.appendChild(numero_conta)
-      dO_dt_Compra.appendChild(dO_pagamento_Envio).textContent = "Selecionar Metodo de Envio"
-      dO_dt_Compra.appendChild(dO_Envio)
-      dO_dt_Compra.appendChild(pO_rastreio)
-      dO_dt_Compra.appendChild(selecionarCidade).textContent = "Selecionar Cidade"
-      dO_dt_Compra.appendChild(dO_Cidade)
-      dO_dt_Compra.appendChild(dO_InfCidade)
-      dO_InfCidade.appendChild(p_entregaEstimada)
-      dO_InfCidade.appendChild(p_entrega)
-
-      // Numero do Whatsapp
-      face_Compra.appendChild(dO_daddosUsuario)
-      dO_daddosUsuario.appendChild(wa_dO_contactos)
-      wa_dO_contactos.appendChild(wa_labelUsuario).textContent = "Número do WhatsApp"
-      wa_dO_contactos.appendChild(wa_inputDadosUser)
-      wa_inputDadosUser.appendChild(wa_input).placeholder = "+244 943 000 000"
-      wa_dO_contactos.appendChild(wa_aviso)
-
-      // Numero de telefone
-      dO_daddosUsuario.appendChild(nu_dO_contactos)
-      nu_dO_contactos.appendChild(nu_labelUsuario).textContent = "Número de Telefone"
-      nu_dO_contactos.appendChild(nu_inputDadosUser)
-      nu_inputDadosUser.appendChild(nu_input).placeholder = "+244 943 000 000"
-      nu_dO_contactos.appendChild(nu_aviso)
-
-      // Email
-      dO_daddosUsuario.appendChild(gm_dO_contactos)
-      gm_dO_contactos.appendChild(gm_labelUsuario).textContent = "Email"
-      gm_dO_contactos.appendChild(gm_inputDadosUser)
-      gm_inputDadosUser.appendChild(gm_input).placeholder = "joaofilipe@gamil.com"
-      gm_dO_contactos.appendChild(gm_aviso)
-
-      // Endereco
-      dO_daddosUsuario.appendChild(en_dO_contactos)
-      en_dO_contactos.appendChild(en_labelUsuario).textContent = "Endereco"
-      en_dO_contactos.appendChild(en_inputDadosUser)
-      en_inputDadosUser.appendChild(en_input).placeholder = "Endereço de entrega"
-      en_dO_contactos.appendChild(en_aviso)
-
-      // butao submit 
-      dO_daddosUsuario.appendChild(dO_buttonSubmit)
-      dO_buttonSubmit.appendChild(b_buttonSubmit).textContent = "Enviar"
-   }
-
-
-
-   let nomeConta = document.querySelector('.nomeConta')
-   let numeroConta = document.querySelector('.numeroConta')
-   let rastreio = document.querySelector('.rastreio')
-   let entrega = document.querySelector('.entrega')
-   let entregaEstimada = document.querySelector('.entregaEstimada')
-
-
-   let valorChave = "" // valor chave para o swich cese opcoes de pagamento
-   let valorChaveDois = "" // valor chave para o swich cese opcoes de envio
-   let valorChavesTres = "" // valor chave para o swich cese opcoes de cidade
-   let labelPgamento = document.querySelectorAll('.labelPgamento')
-
-   let radioPagmento = document.querySelectorAll('.radioPagmento')
-   if (radioPagmento) {
-      radioPagmento.forEach(rp => {
-         if (rp.checked) {
-
-            valorChave = rp.value
-            opcoesSwich(valorChave)
-
-            if (labelPgamento) {
-               labelPgamento.forEach(lp => {
-                  if (rp.value == lp.dataset.nome) {
-                     lp.classList.add('selecionarActivo')
-                  }
-               })
-            }
-         }
-
-         rp.addEventListener('change', () => {
-            valorChave = rp.value
-            opcoesSwich(valorChave)
-         })
-      })
-   }
-
-   if (labelPgamento) {
-      labelPgamento.forEach(lp_dois => {
-         lp_dois.addEventListener('click', () => {
-            labelPgamento.forEach(lp_tres => {
-               lp_tres.classList.remove('selecionarActivo')
-            })
-            lp_dois.classList.add('selecionarActivo')
-         })
-      })
-   }
-
-   // funacao para opcoes do swich case para opces de pagamentos
-   function opcoesSwich(valorChave) {
-      if (labelPgamento) {
-         switch (valorChave) {
-            case labelPgamento[0].dataset.nome:
-               nomeConta.textContent = "Evan Comerical"
-               numeroConta.textContent = "945 132 201"
-               break;
-
-            case labelPgamento[1].dataset.nome:
-               nomeConta.textContent = "Multicaixa Express"
-               numeroConta.textContent = "925 122 221"
-               break;
-
-            case labelPgamento[2].dataset.nome:
-               nomeConta.textContent = "EVAN COMERCIAL"
-               numeroConta.textContent = "AO06 0006 0000 2345 2819 6"
-               break;
-
-            default:
-               break;
-         }
-      }
-   }
-
-   let labelEnvio = document.querySelectorAll('.labelEnvio')
-   let radioEnvio = document.querySelectorAll('.radioEnvio')
-   if (radioEnvio) {
-      radioEnvio.forEach(re => {
-         if (labelEnvio) {
-            labelEnvio.forEach(le => {
-               if (re.checked) {
-
-                  valorChaveDois = re.value
-                  opcoesSwichDois(valorChaveDois)
-
-                  if (re.value == le.dataset.nome) {
-                     le.classList.add('selecionarActivo')
-                  }
-               }
-            })
-         }
-
-         re.addEventListener('change', () => {
-            valorChaveDois = re.value
-            opcoesSwichDois(valorChaveDois)
-         })
-      })
-   }
-
-   if (labelEnvio) {
-      labelEnvio.forEach(le_dois => {
-         le_dois.addEventListener('click', () => {
-            labelEnvio.forEach(le_tres => {
-               le_tres.classList.remove('selecionarActivo')
-            })
-
-            le_dois.classList.add('selecionarActivo')
-         })
-      })
-   }
-
-
-   // funacao para opcoes do swich case
-   function opcoesSwichDois(valorChaveDois) {
-      if (labelEnvio) {
-         switch (valorChaveDois) {
-            case labelEnvio[0].dataset.nome:
-               if (rastreio) {
-                  rastreio.textContent = "Rastreio disponível"
-               }
-               break;
-
-            case labelEnvio[1].dataset.nome:
-               rastreio.textContent = "Rastreio disponível"
-               break;
-
-            case labelEnvio[2].dataset.nome:
-               rastreio.textContent = "Compromisso do EVAN"
-               break;
-
-            default:
-               break;
-         }
-      }
-   }
-
-
-   let labelCidade = document.querySelectorAll('.labelCidade')
-   let radioCidade = document.querySelectorAll('.radioCidade')
-   if (radioCidade) {
-      radioCidade.forEach(rc => {
-         if (labelCidade) {
-            labelCidade.forEach(lc => {
-               if (rc.checked) {
-
-                  valorChavesTres = rc.value
-                  opcoesSwichTres(valorChavesTres)
-
-                  if (rc.value == lc.dataset.nome) {
-                     lc.classList.add('selecionarActivo')
-                  }
-               }
-            })
-         }
-
-         rc.addEventListener('change', () => {
-            valorChavesTres = rc.value
-            opcoesSwichTres(valorChavesTres)
-         })
-      })
-   }
-
-
-   if (labelCidade) {
-      labelCidade.forEach(lc_dois => {
-         lc_dois.addEventListener('click', () => {
-            labelCidade.forEach(lc_tres => {
-               lc_tres.classList.remove('selecionarActivo')
-            })
-
-            lc_dois.classList.add('selecionarActivo')
-         })
-      })
-   }
-
-   // funacao para opcoes do swich case para selicionar cidades
-   function opcoesSwichTres(valorChavesTres) {
-
-      let x_precoIten = document.querySelector('.precoIten')
-      if (labelEnvio) {
-         switch (valorChavesTres) {
-            case labelCidade[0].dataset.nome:
-               if (rastreio) {
-                  taxaEntrega = 800
-                  entregaEstimada.textContent = ` Frete ${taxaEntrega}Kz`
-                  entrega.textContent = "Entrega estimada de 2 a 5 horas"
-
-                  totalMaisTaxa = totalItens + taxaEntrega
-
-                  let spanTotal = document.querySelector('.spanTotal')
-                  if (spanTotal) {
-                     spanTotal.textContent = `total a pagar ${totalMaisTaxa}kz`
-                  }
-               }
-               break;
-
-            case labelCidade[1].dataset.nome:
-               if (rastreio) {
-
-                  taxaEntrega = 3000
-                  entregaEstimada.textContent = `Frete ${taxaEntrega}Kz`
-                  entrega.textContent = "Entrega estimada de 1 a 3 dias"
-
-                  totalMaisTaxa = totalItens + taxaEntrega
-
-                  let spanTotal = document.querySelector('.spanTotal')
-                  if (spanTotal) {
-                     spanTotal.textContent = `total a pagar ${totalMaisTaxa}kz`
-                  }
-               }
-               break;
-         }
-      }
-   }
-
-   let whatsApp = document.querySelector('.whatsApp')
-   let numeroTelefone = document.querySelector('.numeroTelefone')
-   let g_mail = document.querySelector('.g_mail')
-   let endereco = document.querySelector('.endereco')
-   let aviso = document.querySelectorAll('.aviso')
-
-
-   let buttonSubmit = document.querySelector('.buttonSubmit')
-   if (buttonSubmit) {
-      buttonSubmit.addEventListener('click', () => {
-
-         if (whatsApp.value == "" && numeroTelefone.value == "" && g_mail.value == "" && endereco.value == "") {
-            aviso.forEach(avs => {
-               avs.textContent = "Este campo é obrigatório"
-            })
-         }
-
-         else if (whatsApp.value == "") {
-            aviso[0].textContent = "Este campo é obrigatório"
-            aviso[1].textContent = ""
-            aviso[2].textContent = ""
-            aviso[3].textContent = ""
-         }
-
-         else if (numeroTelefone.value == "") {
-            aviso[0].textContent = ""
-            aviso[1].textContent = "Este campo é obrigatório"
-            aviso[2].textContent = ""
-            aviso[3].textContent = ""
-         }
-
-         else if (g_mail.value == "") {
-            aviso[0].textContent = ""
-            aviso[1].textContent = ""
-            aviso[2].textContent = "Este campo é obrigatório"
-            aviso[3].textContent = ""
-         }
-
-         else if (endereco.value == "") {
-            aviso[0].textContent = ""
-            aviso[1].textContent = ""
-            aviso[2].textContent = ""
-            aviso[3].textContent = "Este campo é obrigatório"
-         }
-
-         else {
-            aviso.forEach(avs => {
-               avs.textContent = ""
-            })
-
-            let regexOU = /^\+244\s?9\d{2}\s?\d{3}\s?\d{3}$/;
-            let regex = /^\+2449\d{8}$/;
-            if (regex.test(whatsApp.value) || regexOU.test(whatsApp.value)) {
-               if (regex.test(numeroTelefone.value) || regexOU.test(numeroTelefone.value)) {
-                  let regxEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-                  if (regxEmail.test(g_mail.value)) {
-                     aviso[2].textContent = ""
-
-
-                  }
-
-                  else {
-                     aviso[2].textContent = "Email inválido. Por favor, insira um email válido."
-                  }
-               }
-
-               else {
-                  aviso[1].textContent = "Número inválido. Deve começar com +244 e ter 9 dígitos iniciando por 9."
-               }
-            }
-
-            else {
-               aviso[0].textContent = "Número inválido. Deve começar com +244 e ter 9 dígitos iniciando por 9."
-            }
-
-         }
-      })
-   }
-
-}
-
-/* inicialização */
-detalhesCompra()
-
-/* ================================
-   GUARDAR CARRINHO NO LOCALSTORAGE
-================================ */
-function guardar() {
-   localStorage.setItem("carrinho", JSON.stringify(carrinho))
-   if (numeros_Itens) {
-      numeros_Itens.innerHTML = carrinho.length
-   }
-}
-guardar()
+// ACTULIZAR ITENS
+actualizar()

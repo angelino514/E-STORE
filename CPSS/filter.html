@@ -13,7 +13,6 @@
 <body>
 
 
-
    <header class="header-filter">
       <div class="face">
          <div class="itens-face">
@@ -26,23 +25,23 @@
          </div>
 
          <div class="itens-face">
-            <button class="verItensCarrinho link_carrinho">
+            <button class="verItens link_carrinho" value="carrinho">
                <span class="material-symbols-outlined">
                   shopping_bag
                </span>
-               <span class="numeros_Itens numeros_carrinho"> 0 </span>
+               <span class="numeros_Itens numero_itens numeros_carrinho" data-nome="carrinho"> 0 </span>
             </button>
          </div>
       </div>
 
-      <section class="scroll-filter">
+      <section class=" scroll-filter">
          <nav class="navbar-fillter">
          </nav>
       </section>
    </header>
 
 
-   <main class="main-fillter">
+   <main class="main-fillter main_gerl_container">
       <div class="face">
          <div class="container-fillter">
          </div>
@@ -84,36 +83,6 @@
    </main>
 
 
-   <section class="carrinho">
-      <div class="voltar">
-         <div class="face">
-            <button class="voltar_Button">
-               voltar
-            </button>
-         </div>
-      </div>
-
-      <div class="face" id="faceItens">
-      </div>
-
-      <!-- confirmar dados de compra  -->
-      <div class="dadosDetalhes">
-         <div class="dOremoverDetalhes">
-
-         </div>
-
-         <div class="face" id="face_Compra">
-         </div>
-
-      </div>
-
-      <div class="dO_pagar">
-         <button class="pagamento">
-            comprar
-         </button>
-      </div>
-   </section>
-
    <section class="sect_avisoAdicionar">
       <article class="face">
          <div class="processo"></div>
@@ -121,16 +90,22 @@
       </article>
    </section>
 
-   <section class="ver_itens_carrinho">
-      <div class="face ver_container">
-         <article class="art_ver_remove">
-            <button class="material-symbols-outlined b_ver_remover"> close </button>
-         </article>
+   <section class="section_list_geral">
 
-         <article class="art_container_ver">
+      <div class="container_face_list face">
 
-         </article>
+         <div class="container_remove_list">
+            <button class="verItens" value="remover">
+               <span class="material-symbols-outlined b_ver_remover"> close </span>
+            </button>
+         </div>
+
+         <div class="container_auto_list">
+
+         </div>
+
       </div>
+
    </section>
 
 
@@ -179,7 +154,6 @@
 
       </div>
    </footer>
-
 
    <script type="module" src="../JSS/fillter.js"></script>
 </body>
