@@ -41,6 +41,8 @@ Separação em módulos
 Melhor responsividade
 Integração com backend
 Possível migração para React
+
+
 👨‍💻 Autor
 
 Desenvolvido por Angelino Eurico
