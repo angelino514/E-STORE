@@ -1,77 +1,46 @@
-# 🛒 E-Store
+🛒 E-STORE
 
-Uma plataforma de e-commerce moderna desenvolvida com **HTML, CSS e JavaScript (Vanilla JS)**.  
-Este projeto simula uma loja online real com foco em experiência do utilizador, organização de código e responsividade.
+Projeto de e-commerce em desenvolvimento, criado com HTML, CSS e JavaScript.
 
----
+📌 Sobre o projeto
 
-## 🚀 Demonstração do Projeto
+O E-STORE é uma loja online fictícia que permite visualizar produtos, adicionar itens ao carrinho, favoritos e navegar por categorias.
 
-Projeto de loja online com funcionalidades essenciais de e-commerce, incluindo navegação de produtos, carrinho de compras e interface responsiva para dispositivos móveis e desktop.
+Este projeto ainda está em fase de desenvolvimento e continua a receber melhorias e novas funcionalidades.
 
----
+⚙️ Funcionalidades atuais
+Lista dinâmica de produtos
+Sistema de carrinho de compras
+Sistema de favoritos
+Pesquisa de produtos com sugestões
+Filtro por categorias
+Página de detalhes do produto
+Banners promocionais
+Atualização de quantidade de itens
+Armazenamento local (localStorage)
+🛠️ Tecnologias usadas
+HTML5
+CSS3
+JavaScript (Vanilla JS)
+🚧 Estado do projeto
 
-## ✨ Funcionalidades
+🔧 Em desenvolvimento
+Novas funcionalidades e melhorias estão a ser implementadas constantemente.
 
-- 🛍️ Catálogo de produtos dinâmico  
-- 🛒 Sistema de carrinho de compras  
-- ➕ Adição e remoção de itens do carrinho  
-- 📱 Layout totalmente responsivo  
-- ⚡ Interatividade com JavaScript puro  
-- 🎯 Interface simples e intuitiva  
+🎯 Objetivo
 
----
+Este projeto foi criado para praticar:
 
-## 🛠️ Tecnologias Utilizadas
+Lógica de programação
+Manipulação do DOM
+Estrutura de aplicações web
+Criação de sistemas reais de e-commerce
+📈 Próximas melhorias
+Refatoração do código
+Separação em módulos
+Melhor responsividade
+Integração com backend
+Possível migração para React
+👨‍💻 Autor
 
-- HTML5  
-- CSS3  
-- JavaScript (Vanilla JS)
-
----
-
-## 🎯 Objetivo do Projeto
-
-Este projeto foi desenvolvido com foco em:
-
-- Praticar lógica de programação com JavaScript  
-- Construção de interfaces web responsivas  
-- Simulação de um sistema real de e-commerce  
-- Evolução para portfólio profissional  
-
----
-
-## 📸 Interface do Projeto
-
-*(Adicione aqui screenshots do projeto para aumentar o impacto visual)*
-
----
-
-## 🚀 Como executar o projeto
-
-1. Baixar ou abrir o projeto no computador  
-2. Localizar o ficheiro `index.html`  
-3. Abrir no navegador  
-
----
-
-## 📈 Melhorias futuras
-
-- Sistema de autenticação (login/registro)  
-- Integração com backend (Node.js ou PHP)  
-- Base de dados para produtos  
-- Sistema de pagamentos simulado  
-- Filtros e pesquisa de produtos  
-
----
-
-## 👨‍💻 Autor
-
-Desenvolvido por **Angelino Eurico**  
-Programador Web | HTML • CSS • JavaScript  
-
----
-
-## 📌 Nota
-
-Este projeto faz parte do processo de aprendizagem e construção de portfólio como desenvolvedor web.
+Desenvolvido por Angelino Eurico
